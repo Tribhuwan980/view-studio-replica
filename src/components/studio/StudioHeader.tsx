@@ -72,6 +72,9 @@ export function StudioHeader() {
             <DropdownMenuItem className="text-foreground cursor-pointer" onClick={() => navigate("/customization")}>
               Your channel
             </DropdownMenuItem>
+            <DropdownMenuItem className="text-foreground cursor-pointer" onClick={() => navigate("/settings")}>
+              Settings
+            </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem className="text-foreground cursor-pointer" onClick={signOut}>
               Sign out

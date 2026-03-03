@@ -13,6 +13,7 @@ import Comments from "@/pages/Comments";
 import SubtitlesPage from "@/pages/SubtitlesPage";
 import Customization from "@/pages/Customization";
 import AudioLibrary from "@/pages/AudioLibrary";
+import Settings from "@/pages/Settings";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -51,6 +52,7 @@ function AppRoutes() {
       <Route path="/subtitles" element={<ProtectedRoute><SubtitlesPage /></ProtectedRoute>} />
       <Route path="/customization" element={<ProtectedRoute><Customization /></ProtectedRoute>} />
       <Route path="/audio-library" element={<ProtectedRoute><AudioLibrary /></ProtectedRoute>} />
+      <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
