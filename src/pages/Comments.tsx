@@ -18,7 +18,8 @@ export default function Comments() {
     queryFn: async () => {
       const { data } = await supabase
         .from("comments")
-        .select("*, videos(title, thumbnail_url)")
+        .select("*, videos!inner(title, thumbnail_url, user_id)")
+        .eq("videos.user_id", user!.id)
         .order("created_at", { ascending: false });
       return data || [];
     },
