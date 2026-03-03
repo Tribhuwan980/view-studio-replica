@@ -29,9 +29,15 @@ export default function Customization() {
   const saveMutation = useMutation({
     mutationFn: async () => {
       if (!user) return;
+      if (channelName.length > 100) throw new Error("Channel name must be 100 characters or less");
+      if (description.length > 5000) throw new Error("Description must be 5000 characters or less");
+      const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5MB
+      if (avatarFile && avatarFile.size > MAX_IMAGE_SIZE) throw new Error("Avatar must be under 5MB");
+      if (bannerFile && bannerFile.size > MAX_IMAGE_SIZE) throw new Error("Banner must be under 5MB");
+
       const updates: any = {
-        channel_name: channelName,
-        channel_description: description,
+        channel_name: channelName.slice(0, 100),
+        channel_description: description.slice(0, 5000),
       };
 
       if (avatarFile) {

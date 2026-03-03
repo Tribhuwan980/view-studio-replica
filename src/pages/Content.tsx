@@ -75,6 +75,15 @@ export default function Content() {
   const uploadMutation = useMutation({
     mutationFn: async () => {
       if (!videoFile || !user) throw new Error("Missing file or user");
+
+      // Client-side validation
+      const MAX_VIDEO_SIZE = 500 * 1024 * 1024; // 500MB
+      const MAX_THUMB_SIZE = 5 * 1024 * 1024; // 5MB
+      if (videoFile.size > MAX_VIDEO_SIZE) throw new Error("Video must be under 500MB");
+      if (thumbnailFile && thumbnailFile.size > MAX_THUMB_SIZE) throw new Error("Thumbnail must be under 5MB");
+      if (title.length > 200) throw new Error("Title must be 200 characters or less");
+      if (description.length > 10000) throw new Error("Description must be 10,000 characters or less");
+
       setUploading(true);
       setUploadProgress(10);
 
@@ -86,9 +95,13 @@ export default function Content() {
       if (videoError) throw videoError;
       setUploadProgress(50);
 
-      const { data: videoUrlData } = supabase.storage.from("videos").getPublicUrl(videoPath);
+      // Videos bucket is private, use signed URL
+      const { data: signedUrlData, error: signedUrlError } = await supabase.storage
+        .from("videos")
+        .createSignedUrl(videoPath, 60 * 60 * 24 * 365); // 1 year
+      if (signedUrlError) throw signedUrlError;
 
-      // Upload thumbnail if provided
+      // Upload thumbnail if provided (thumbnails bucket is public)
       let thumbnailUrl = null;
       if (thumbnailFile) {
         const thumbPath = `${user.id}/${Date.now()}-${thumbnailFile.name}`;
@@ -104,9 +117,9 @@ export default function Content() {
       // Insert video record
       const { error: insertError } = await supabase.from("videos").insert({
         user_id: user.id,
-        title: title || videoFile.name,
-        description,
-        video_url: videoUrlData.publicUrl,
+        title: (title || videoFile.name).slice(0, 200),
+        description: description.slice(0, 10000),
+        video_url: signedUrlData.signedUrl,
         thumbnail_url: thumbnailUrl,
         status: visibility,
         visibility,
