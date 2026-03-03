@@ -6,6 +6,7 @@ import {
   Subtitles,
   Palette,
   Music,
+  Settings,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
@@ -28,6 +29,7 @@ const navItems = [
   { title: "Subtitles", url: "/subtitles", icon: Subtitles },
   { title: "Customization", url: "/customization", icon: Palette },
   { title: "Audio library", url: "/audio-library", icon: Music },
+  { title: "Settings", url: "/settings", icon: Settings },
 ];
 
 export function StudioSidebar() {
