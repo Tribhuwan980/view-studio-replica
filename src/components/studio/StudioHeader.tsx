@@ -1,4 +1,4 @@
-import { Search, Upload, Bell, HelpCircle } from "lucide-react";
+import { Search, Upload, HelpCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -12,14 +12,17 @@ import {
 import { useAuth } from "@/contexts/AuthContext";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { useNavigate } from "react-router-dom";
+import { NotificationDropdown } from "./NotificationDropdown";
+import { useState } from "react";
 
 export function StudioHeader() {
   const { user, profile, signOut } = useAuth();
   const navigate = useNavigate();
+  const [showMobileSearch, setShowMobileSearch] = useState(false);
 
   return (
-    <header className="h-14 bg-yt-header border-b border-border flex items-center justify-between px-4 shrink-0">
-      <div className="flex items-center gap-2">
+    <header className="h-14 bg-yt-header border-b border-border flex items-center justify-between px-2 sm:px-4 shrink-0">
+      <div className="flex items-center gap-1 sm:gap-2">
         <SidebarTrigger className="text-muted-foreground hover:text-foreground" />
         <div className="flex items-center gap-1 cursor-pointer" onClick={() => navigate("/")}>
           <div className="bg-yt-red rounded-lg p-1">
@@ -31,6 +34,7 @@ export function StudioHeader() {
         </div>
       </div>
 
+      {/* Desktop search */}
       <div className="flex-1 max-w-md mx-4 hidden md:block">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -41,20 +45,37 @@ export function StudioHeader() {
         </div>
       </div>
 
-      <div className="flex items-center gap-1">
+      {/* Mobile search overlay */}
+      {showMobileSearch && (
+        <div className="fixed inset-0 z-50 bg-background p-3 md:hidden">
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" size="icon" onClick={() => setShowMobileSearch(false)} className="text-foreground shrink-0">
+              ←
+            </Button>
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input placeholder="Search" autoFocus className="pl-9 bg-secondary border-border h-10" />
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="flex items-center gap-0.5 sm:gap-1">
+        {/* Mobile search button */}
+        <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground md:hidden" onClick={() => setShowMobileSearch(true)}>
+          <Search className="h-5 w-5" />
+        </Button>
         <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground" onClick={() => navigate("/content")}>
           <Upload className="h-5 w-5" />
         </Button>
-        <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
+        <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground hidden sm:inline-flex">
           <HelpCircle className="h-5 w-5" />
         </Button>
-        <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
-          <Bell className="h-5 w-5" />
-        </Button>
+        <NotificationDropdown />
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" className="rounded-full ml-1">
+            <Button variant="ghost" size="icon" className="rounded-full ml-0.5 sm:ml-1">
               <Avatar className="h-8 w-8">
                 <AvatarImage src={profile?.avatar_url || ""} />
                 <AvatarFallback className="bg-yt-blue text-sm text-white">
